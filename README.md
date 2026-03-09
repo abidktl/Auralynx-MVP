@@ -4,14 +4,26 @@ Real-time Reddit monitoring → AI intent scoring → Telegram alerts.
 
 Detects buying-intent signals in cold email / SaaS subreddits and delivers scored alerts with pre-written reply drafts to your phone in under 10 seconds.
 
-## Architecture
+## Architecture & Compliance
 
+AuraLynx is designed as a **read-only** signal detection tool. It monitors specific subreddits for keyword-based intent signals and delivers them via Telegram.
+
+> [!IMPORTANT]
+> **Read-Only Operation**: This system only reads public posts and inbox messages. It does **not** create posts, submit comments, or send automated messages on Reddit.
+
+### Why not Devvit?
+This application requires being hosted on an external server for several technical reasons:
+1. **External API Integrations**: It calls third-party LLM APIs (OpenAI-compatible) and the Telegram Bot API, which are restricted within the Devvit sandbox.
+2. **Persistent Background Processes**: It maintains a real-time stream via PRAW to monitor multiple subreddits simultaneously, which requires a persistent environment.
+3. **External Database**: Uses a local SQLite database for deduplication and historical analysis.
+
+### System Flow
 ```
-Reddit (PRAW stream)
+Reddit (PRAW read-only stream)
     → Keyword pre-filter (40+ pain keywords)
-    → LLM scoring (OpenAI-compatible API)
-    → SQLite (all signals saved)
-    → Telegram alert (score ≥ 7)
+    → LLM scoring (External OpenAI-compatible API)
+    → SQLite (Local storage for dedup & analysis)
+    → Telegram alert (External Bot API)
 ```
 
 ## Quick Start

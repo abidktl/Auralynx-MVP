@@ -16,8 +16,8 @@ REDDIT_PASSWORD = os.getenv("REDDIT_PASSWORD", "")
 REDDIT_USER_AGENT = os.getenv("REDDIT_USER_AGENT", "AuraLynx Signal Monitor v1.0")
 
 # ─── LLM API (OpenAI-compatible endpoint) ────────────────────
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://qwerktl02.srv1357251.hstgr.cloud/v1")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "sk-8d77e97de372a987-pjihdr-666a3ba7")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
+LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_MODEL = os.getenv("LLM_MODEL", "ag/Claude Opus 4.6 Thinking")
 
 # ─── Telegram ─────────────────────────────────────────────────
