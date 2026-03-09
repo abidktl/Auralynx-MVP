@@ -48,6 +48,11 @@ def init_db(conn: sqlite3.Connection):
             message_id  TEXT PRIMARY KEY,
             seen_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        CREATE TABLE IF NOT EXISTS seen_reviews (
+            review_id   TEXT PRIMARY KEY,
+            seen_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     """)
     conn.commit()
     log.info("Database initialized at %s", DB_PATH)
@@ -83,6 +88,22 @@ def mark_seen_inbox(conn: sqlite3.Connection, message_id: str):
     """Mark an inbox message as seen."""
     conn.execute(
         "INSERT OR IGNORE INTO seen_inbox (message_id) VALUES (?)", (message_id,)
+    )
+    conn.commit()
+
+
+def already_seen_review(conn: sqlite3.Connection, review_id: str) -> bool:
+    """Check if a review has already been processed."""
+    row = conn.execute(
+        "SELECT 1 FROM seen_reviews WHERE review_id = ?", (review_id,)
+    ).fetchone()
+    return row is not None
+
+
+def mark_seen_review(conn: sqlite3.Connection, review_id: str):
+    """Mark a review as seen."""
+    conn.execute(
+        "INSERT OR IGNORE INTO seen_reviews (review_id) VALUES (?)", (review_id,)
     )
     conn.commit()
 

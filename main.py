@@ -21,6 +21,7 @@ from reddit_stream import create_reddit_client, stream_submissions
 from scorer import score_post
 from telegram_bot import send_alert, send_daily_summary
 from inbox_monitor import monitor_inbox
+from review_monitor import monitor_reviews
 
 # ─── Logging Setup ────────────────────────────────────────────
 logging.basicConfig(
@@ -144,6 +145,14 @@ def run_inbox_monitor(reddit, conn):
         log.error("Inbox monitor thread error: %s", e)
 
 
+def run_review_monitor():
+    """Run review monitor in a separate thread."""
+    try:
+        monitor_reviews()
+    except Exception as e:
+        log.error("Review monitor thread error: %s", e)
+
+
 def main():
     """Main entry point — start both monitors."""
     # Register shutdown handler
@@ -167,6 +176,15 @@ def main():
     )
     inbox_thread.start()
     log.info("Inbox monitor thread started")
+
+    # Start review monitor in background thread
+    review_thread = threading.Thread(
+        target=run_review_monitor,
+        daemon=True,
+        name="review-monitor",
+    )
+    review_thread.start()
+    log.info("Review monitor thread started")
 
     # Run signal monitor in main thread (blocking)
     try:

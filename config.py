@@ -33,6 +33,13 @@ SCORE_THRESHOLD = int(os.getenv("SCORE_THRESHOLD", "7"))
 SUMMARY_HOUR_UTC = int(os.getenv("SUMMARY_HOUR_UTC", "6"))
 MAX_BODY_LENGTH = 1500  # Truncate post body for scoring
 
+# Competitor Review Monitoring
+TRUSTPILOT_URLS = [
+    "https://www.trustpilot.com/review/instantly.ai",
+    "https://www.trustpilot.com/review/smartlead.ai"
+]
+REVIEW_CHECK_INTERVAL_MIN = int(os.getenv("REVIEW_CHECK_INTERVAL_MIN", "60"))
+
 # ─── Database ─────────────────────────────────────────────────
 DB_PATH = os.getenv("DB_PATH", "auralynx.db")
 

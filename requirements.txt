@@ -2,3 +2,4 @@ praw
 openai
 python-telegram-bot
 python-dotenv
+scrapling

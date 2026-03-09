@@ -127,3 +127,49 @@ Return ONLY valid JSON:
                 time.sleep(2)
 
     return None
+def score_review(review_text: str, rating: int, competitor: str, max_retries: int = 2) -> dict | None:
+    """
+    Score a competitor review for buying intent.
+    Picks up on users frustrated with competitors.
+    """
+    review_prompt = f"""You are analyzing a {rating}-star review for the competitor '{competitor}'.
+Identify if this person is a qualified lead for our cold email deliverability and setup agency.
+
+Return ONLY valid JSON:
+{{"score": 1-10, "signal_type": "competitor_pain", "summary": "brief summary", "reply_draft": "helpful non-salesy advice"}}
+
+1-3: Generic complaint, not about our core service
+4-6: Relevant pain (e.g. deliverability) but maybe just venting
+7-8: Strong pain, looking for alternatives or solutions
+9-10: Immediate need, high frustration with current tool deliverability/setup"""
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = client.chat.completions.create(
+                model=LLM_MODEL,
+                max_tokens=600,
+                temperature=0.3,
+                messages=[
+                    {"role": "system", "content": review_prompt},
+                    {"role": "user", "content": review_text},
+                ],
+            )
+
+            raw = response.choices[0].message.content.strip()
+            if raw.startswith("```"):
+                raw = raw.split("\n", 1)[-1]
+                if raw.endswith("```"):
+                    raw = raw[:-3]
+                raw = raw.strip()
+
+            result = json.loads(raw)
+            # Ensure score is int 1-10
+            result["score"] = max(1, min(10, int(result.get("score", 1))))
+            return result
+
+        except Exception as e:
+            log.warning("Review scoring error (attempt %d): %s", attempt, e)
+            if attempt < max_retries:
+                time.sleep(2)
+
+    return None
