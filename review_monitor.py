@@ -79,8 +79,8 @@ def monitor_reviews():
                         continue
                     
                     # Pre-filter: Focus on low ratings (1-3) or specific keywords
-                    # If high rating, maybe skip unless keywords match (less likely for pain)
-                    if rev["rating"] > 3:
+                    rating = int(rev["rating"])
+                    if rating > 3:
                         # Skip high ratings for now as they aren't "pain" signals
                         mark_seen_review(conn, rev["id"])
                         continue

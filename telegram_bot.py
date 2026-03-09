@@ -40,21 +40,27 @@ def _format_alert_message(signal: dict) -> str:
     emoji = _score_emoji(score)
     bar = _score_bar(score)
     signal_type = signal.get("signal_type", "general").upper()
+    source = signal.get("source", "reddit")
     subreddit = signal.get("subreddit", "unknown")
     author = signal.get("author", "unknown")
     summary = signal.get("summary", "No summary")
     reply_draft = signal.get("reply_draft", "No draft available")
     url = signal.get("url", "")
 
+    # Source-specific formatting
+    source_label = "Subreddit" if source == "reddit" else "Competitor"
+    source_val = f"r/{subreddit}" if source == "reddit" else subreddit
+    source_header = f"— {source.upper()}" if source != "reddit" else ""
+
     # Escape markdown special chars in user content
     summary = summary.replace("_", "\\_").replace("*", "\\*").replace("`", "\\`")
     reply_draft = reply_draft.replace("_", "\\_").replace("*", "\\*").replace("`", "\\`")
 
     message = (
-        f"{emoji} *SIGNAL DETECTED — {signal_type}*\n"
+        f"{emoji} *SIGNAL DETECTED {source_header} — {signal_type}*\n"
         f"\n"
         f"Score: {score}/10 {bar}\n"
-        f"Subreddit: r/{subreddit}\n"
+        f"{source_label}: {source_val}\n"
         f"Author: u/{author}\n"
         f"\n"
         f"📌 *Summary:*\n"
